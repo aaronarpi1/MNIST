@@ -5,8 +5,17 @@ as a Typer CLI backed by PyTorch Lightning.
 
 ## Setup
 
+Requires Python 3.11+. Check your default interpreter first:
+
 ```bash
-python -m venv .venv
+python3 --version
+```
+
+If it's older than 3.11, install one (e.g. `brew install python@3.11` on
+macOS) and use it explicitly below in place of `python3`.
+
+```bash
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -e ".[test]"
 ```

@@ -99,7 +99,13 @@ split only (validation/test always reflect the true curated imbalance) by
 resampling existing images and applying a small randomized augmentation
 (rotation, translation, scale, shear, stroke thickness, brightness, noise).
 
-## Example run
+## Example runs
+
+Both use 20 epochs, focal loss (default alpha/gamma), the problem
+statement's class counts, and no augmentation -- differing only in
+selection strategy, to compare the two.
+
+### Prototype selection
 
 ```bash
 digit-classification train \
@@ -108,9 +114,8 @@ digit-classification train \
     --selection-strategy prototype --loss-function 1
 ```
 
-20 epochs, PCA/K-Means prototype selection, focal loss (default
-alpha/gamma), no augmentation. Final validation accuracy 0.997, validation
-loss 0.00088. Test-set evaluation:
+Final validation accuracy 0.997, validation loss 0.00088. Test-set
+evaluation:
 
 ```
               precision    recall  f1-score   support
@@ -122,8 +127,31 @@ loss 0.00088. Test-set evaluation:
     accuracy                           0.99      1000
 ```
 
-Full per-epoch metrics, the checkpoint, and the evaluation report are
-saved under `checkpoints/prototype_focal_20ep/` (see its `README.md`).
+### Random selection
+
+```bash
+digit-classification train \
+    --data-dir ./data --output-dir ./checkpoints/random_focal_20ep \
+    --epochs 20 --class-counts 0=1200,5=300,8=3500 \
+    --selection-strategy random --loss-function 1
+```
+
+Final validation accuracy 0.995, validation loss 0.00067. Test-set
+evaluation:
+
+```
+              precision    recall  f1-score   support
+
+           0       1.00      0.99      1.00       240
+           5       1.00      0.97      0.98        60
+           8       0.99      1.00      1.00       700
+
+    accuracy                           1.00      1000
+```
+
+Full per-epoch metrics, each checkpoint, and its evaluation report are
+saved under `checkpoints/prototype_focal_20ep/` and
+`checkpoints/random_focal_20ep/` (see each one's `README.md`).
 
 ## Tests
 

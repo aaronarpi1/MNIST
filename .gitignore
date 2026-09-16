@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Downloaded dataset / default scratch output dir (checkpoints/ holds
+# intentionally-committed example results and is not ignored)
+/data/
+/outputs/

@@ -1,0 +1,34 @@
+[project]
+name = "digit-classification"
+version = "0.1.0"
+description = "Buzz Solutions digit classification coding challenge."
+readme = "README.md"
+authors = [
+    { name = "Aaron Arpi", email = "aaronarpi1@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "lightning>=2.5.0.post0",
+    "torch>=2.6.0",
+    "torchvision>=0.21.0",
+    "typer>=0.15.0",
+    "scikit-learn>=1.5.0",
+    "numpy>=1.26.0",
+    "pillow>=10.0.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0.0",
+    "pytest-cov>=6.0.0",
+]
+
+[project.scripts]
+digit-classification = "digit_classification.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/digit_classification"]

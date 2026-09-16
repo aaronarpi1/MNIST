@@ -106,6 +106,38 @@ def _validate_classes(value: str) -> str:
     return value
 
 
+def _data_dir_option() -> str:
+    """Shared `--data-dir` option: identical everywhere it's used to
+    read (rather than create) the downloaded MNIST data."""
+    return typer.Option(
+        "./data",
+        "--data-dir",
+        help="Directory MNIST is downloaded to / read from.",
+    )
+
+
+def _checkpoint_path_option() -> str:
+    """Shared `--checkpoint-path` option: identical everywhere it's
+    used to load a trained checkpoint."""
+    return typer.Option(
+        ...,
+        "--checkpoint-path",
+        help="Path to a trained Lightning checkpoint.",
+    )
+
+
+def _class_counts_option(help: str) -> str:
+    """Shared `--class-counts` default value and validation callback.
+    `help` is still passed in per call site, since its wording differs
+    between `train` and `evaluate`."""
+    return typer.Option(
+        "0=1200,5=300,8=3500",
+        "--class-counts",
+        callback=_validate_class_counts,
+        help=help,
+    )
+
+
 @app.command("download-data")
 def download_data(
     data_dir: str = typer.Option(
@@ -119,11 +151,7 @@ def download_data(
 
 @app.command()
 def train(
-    data_dir: str = typer.Option(
-        "./data",
-        "--data-dir",
-        help="Directory MNIST is downloaded to / read from.",
-    ),
+    data_dir: str = _data_dir_option(),
     output_dir: str = typer.Option(
         "./outputs",
         "--output-dir",
@@ -156,10 +184,7 @@ def train(
             "test split."
         ),
     ),
-    class_counts: str = typer.Option(
-        "0=1200,5=300,8=3500",
-        "--class-counts",
-        callback=_validate_class_counts,
+    class_counts: str = _class_counts_option(
         help=(
             "Images to curate per digit label, as label=count pairs. "
             "Pass the same value to `evaluate` to reproduce the same "
@@ -314,16 +339,8 @@ def train(
 
 @app.command()
 def evaluate(
-    checkpoint_path: str = typer.Option(
-        ...,
-        "--checkpoint-path",
-        help="Path to a trained Lightning checkpoint.",
-    ),
-    data_dir: str = typer.Option(
-        "./data",
-        "--data-dir",
-        help="Directory MNIST is downloaded to / read from.",
-    ),
+    checkpoint_path: str = _checkpoint_path_option(),
+    data_dir: str = _data_dir_option(),
     seed: int = typer.Option(
         42,
         "--seed",
@@ -332,10 +349,7 @@ def evaluate(
             "the same test split."
         ),
     ),
-    class_counts: str = typer.Option(
-        "0=1200,5=300,8=3500",
-        "--class-counts",
-        callback=_validate_class_counts,
+    class_counts: str = _class_counts_option(
         help=(
             "Images curated per digit label, as label=count pairs. "
             "Must match the value passed to `train`."
@@ -398,11 +412,7 @@ def evaluate(
 
 @app.command()
 def predict(
-    checkpoint_path: str = typer.Option(
-        ...,
-        "--checkpoint-path",
-        help="Path to a trained Lightning checkpoint.",
-    ),
+    checkpoint_path: str = _checkpoint_path_option(),
     input_path: str = typer.Option(
         ...,
         "--input-path",
@@ -456,11 +466,7 @@ def predict(
 
 @app.command("review-augmentations")
 def review_augmentations(
-    data_dir: str = typer.Option(
-        "./data",
-        "--data-dir",
-        help="Directory MNIST is downloaded to / read from.",
-    ),
+    data_dir: str = _data_dir_option(),
     digit: int = typer.Option(
         5,
         "--digit",

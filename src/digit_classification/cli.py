@@ -138,6 +138,12 @@ def _class_counts_option(help: str) -> str:
     )
 
 
+def _seed_option(help: str) -> int:
+    """Shared `--seed` default value. `help` is still passed in per
+    call site, since its wording differs across commands."""
+    return typer.Option(42, "--seed", help=help)
+
+
 @app.command("download-data")
 def download_data(
     data_dir: str = typer.Option(
@@ -174,9 +180,7 @@ def train(
             "a few thousand images."
         ),
     ),
-    seed: int = typer.Option(
-        42,
-        "--seed",
+    seed: int = _seed_option(
         help=(
             "Seed controlling image selection, the train/val/test "
             "split, augmentation, and model init/batching. Pass the "
@@ -341,9 +345,7 @@ def train(
 def evaluate(
     checkpoint_path: str = _checkpoint_path_option(),
     data_dir: str = _data_dir_option(),
-    seed: int = typer.Option(
-        42,
-        "--seed",
+    seed: int = _seed_option(
         help=(
             "Must match the value passed to `train` to reproduce "
             "the same test split."
@@ -481,9 +483,7 @@ def review_augmentations(
         max=10,
         help="How many before/after example images to save.",
     ),
-    seed: int = typer.Option(
-        42,
-        "--seed",
+    seed: int = _seed_option(
         help=(
             "Seed controlling which images are sampled and how "
             "they're augmented."
